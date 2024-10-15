@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Home</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <div class="container text-center">
+        <div class="row pt-5 pb-2">
+            <div class="container text-center pt-5"></div>
+            <h2 th:text="${message}"></h2>
+            </div>
+            <div class="text-center m-3">
+            <a type="button" class="btn btn-md btn-primary" href="/">Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

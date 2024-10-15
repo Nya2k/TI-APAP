@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Ruangan</title>
+
+    <object th:include="fragments/common :: js" th:remove="tag"></object>
+    <object th:include="fragments/common :: css" th:remove="tag"></object>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.css" />
+    <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <div class="container px-10 my-5">
+        <div class="flex justify-between">
+            <h1 class="text-3xl">Rooms</h1>
+            <a href="/rooms/create" class="btn btn-primary">Add Room</a>
+        </div>
+
+        <hr class="my-3 border-t border-black">
+
+        <table id="roomTable" class="display">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Max Capacity</th>
+                    <th>Price Per Day</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="room, stat: ${rooms}" th:if="${room.isDeleted} == false">
+                    <th scope="row" th:text="${stat.index + 1}"></th>
+                    <td th:text="${room.id}"></td>
+                    <td th:text="${room.name}"></td>
+                    <td th:text="${room.maxCapacity}"></td>
+                    <td th:text="${room.pricePerDay}"></td>
+                    <td>
+                        <a th:href="@{/rooms/{roomId}(roomId=${room.id})}" class="btn btn-primary">Detail</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#roomTable').DataTable();
+        });
+    </script>
+</body>
+
+</html>
