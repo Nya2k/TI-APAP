@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Patient Found</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body class="w-full h-screen justify-center items-center">
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h2>Patient Found</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="card" style="width: 60rem;">
+                <div class="card-body">
+                    <form th:action="@{/reservation/create}" th:object="${patient}" method="POST">
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label">NIK</label>
+                            <div class="col-sm-9">
+                                <input type="text" th:value="${patient.NIK}" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label">Gender</label>
+                            <div class="col-sm-9">
+                                <span th:if="${patient.gender == true}">Female</span>
+                                <span th:if="${patient.gender == false}">Male</span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label">Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" th:value="${patient.name}" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label">Date of Birth</label>
+                            <div class="col-sm-9">
+                                <input type="text" th:value="${patient.birthDate}" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <a href="/reservations/create?exist=true" class="btn btn-primary">Create Reservation</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

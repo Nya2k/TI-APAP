@@ -1,6 +1,7 @@
 package apap.ti.hospitalization2206818953.dto.request;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -11,11 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AddPatientRequestDTO {
-    private String name;
-    private boolean gender;
-    private String NIK;
+public class AddReservationRequestDTO {
+    private UUID patientId;
+    private UUID nurseId;
+    private String roomId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date birthDate;
-    private String email;
+    private Date startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd") 
+    private Date endDate;
 }

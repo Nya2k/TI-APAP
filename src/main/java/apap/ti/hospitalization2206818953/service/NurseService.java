@@ -1,7 +1,8 @@
 package apap.ti.hospitalization2206818953.service;
 
-import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
+
 import apap.ti.hospitalization2206818953.model.Nurse;
 
 public interface NurseService {

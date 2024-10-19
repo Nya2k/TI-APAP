@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Create Reservation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="flex items-center justify-center w-full h-screen bg-gray-100">
+    <div class="card w-96 p-6 bg-white rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold text-center mb-4">Search Patient</h1>
+        <form th:action="@{/reservations/create}" method="POST" class="flex flex-col">
+            <label for="nik" class="mb-2 text-lg">NIK</label>
+            <input type="text" id="nik" name="nik" placeholder="NIK" class="mb-4 p-2 border rounded" required>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+</body>
+
+</html>

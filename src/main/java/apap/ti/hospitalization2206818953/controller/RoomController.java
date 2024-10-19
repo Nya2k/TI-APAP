@@ -88,6 +88,8 @@ public class RoomController {
         room.setMaxCapacity(roomDTO.getMaxCapacity());
         room.setPricePerDay(roomDTO.getPricePerDay());
         room.setDescription(roomDTO.getDescription());
+        room.setCreatedAt(new Date());
+        room.setUpdatedAt(new Date());
         roomService.addRoom(room);
 
         model.addAttribute("message", String.format("Ruangan %s dengan ID %s berhasil ditambahkan.", room.getName(), room.getId()));
@@ -124,6 +126,7 @@ public class RoomController {
         room.setMaxCapacity(roomDTO.getMaxCapacity());
         room.setPricePerDay(roomDTO.getPricePerDay());
         room.setDescription(roomDTO.getDescription());
+        room.setUpdatedAt(new Date());
         roomService.updateRoom(room);
 
         model.addAttribute("message", String.format("Ruangan %s berhasil diupdate.", roomDTO.getName()));

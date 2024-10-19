@@ -69,4 +69,14 @@ public class RoomServiceImpl implements RoomService {
     public List<Reservation> findReservationsByRoomIdAndDate(String roomId, Date dateIn, Date dateOut) {
         return reservationDb.findByRoomIdAndDate(roomId, dateIn, dateOut);
     }
+
+    @Override
+    public List<Room> getAvailableRooms(Date startDate, Date endDate) {
+        List<Room> rooms = getAllRoom();
+
+        return rooms.stream().filter(room -> {
+            int currentReservations = reservationDb.countReservationsInRange(room.getId(), startDate, endDate);
+            return room.getMaxCapacity() > currentReservations;
+        }).toList();
+    }
 }

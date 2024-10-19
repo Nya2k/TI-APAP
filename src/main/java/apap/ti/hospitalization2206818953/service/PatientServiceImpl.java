@@ -54,4 +54,9 @@ public class PatientServiceImpl implements PatientService {
     public int countPatients() {
         return (int) patientDb.count();
     }
+
+    @Override
+    public Patient getPatientByNIK(String nik) {
+        return patientDb.findByNIK(nik);
+    }
 }

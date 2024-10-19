@@ -44,7 +44,7 @@ public class Facility {
     @ManyToMany(mappedBy = "listFacility", fetch = FetchType.LAZY)
     private List<Reservation> listReservation;
     
-    @CreationTimestamp
+    @CreationTimestamp  
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false, nullable = false)
     private Date createdAt;

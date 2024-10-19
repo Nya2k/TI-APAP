@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Create Reservation</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <div class="container">
+        <div class="text-center my-4">
+            <h2>Step 2 of 3</h2>
+            <h2>Create Reservation</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="card" style="width: 60rem;">
+                <div class="card-body">
+                    <form th:action="@{/reservations/create}" th:object="${reservationDTO}" method="POST">
+                        <div class="row my-3">
+                            <div class="col-sm-6 flex flex-col">
+                                <label for="nurseId" class="fw-bold col-form-label">Assigned Nurse</label>
+                                <select class="form-select" id="nurseId" th:field="*{nurseId}" required onchange="checkInputs()">
+                                    <option value="" disabled th:if="${reservationDTO.nurseId == null}" selected>Select Nurse</option>
+                                    <option th:each="nurse : ${nurseList}"
+                                            th:value="${nurse.id}"
+                                            th:text="${nurse.name}"
+                                            th:selected="${nurse.id == reservationDTO.nurseId}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row my-3">
+                            <div class="col-sm-4">
+                                <label for="startDate" class="fw-bold col-form-label">Reservation Date In</label>
+                                <input class="form-control" type="date" id="startDate" th:field="*{startDate}" 
+                                    th:value="${#dates.format(reservationDTO.startDate, 'yyyy-MM-dd')}" required 
+                                    onchange="checkInputs()"/>
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="endDate" class="fw-bold col-form-label">Reservation Date Out</label>
+                                <input class="form-control" type="date" id="endDate" th:field="*{endDate}" 
+                                    th:value="${#dates.format(reservationDTO.endDate, 'yyyy-MM-dd')}" required 
+                                    onchange="checkInputs()"/>
+                            </div>
+                            <div class="col-sm-4 d-flex align-items-end">
+                                <a class="btn btn-secondary ml-2" 
+                                    th:href="@{/reservations/create(exist=true, startDate=${#dates.format(startDate, 'yyyy-MM-dd')}, endDate=${#dates.format(endDate, 'yyyy-MM-dd')}, nurseId=${reservationDTO.nurseId})}" 
+                                    onclick="this.href=this.href
+                                        .replace(/startDate=[^&]*/, 'startDate=' + encodeURIComponent(document.getElementById('startDate').value))
+                                        .replace(/endDate=[^&]*/, 'endDate=' + encodeURIComponent(document.getElementById('endDate').value))
+                                        .replace(/nurseId=[^&]*/, 'nurseId=' + encodeURIComponent(document.getElementById('nurseId').value));">
+                                    Search
+                                </a>
+                            </div>
+                        </div>
+
+                        <div id="availableRooms" class="row my-3 flex flex-col" th:if="${roomList != null and !roomList.isEmpty()}">
+                            <div class="col-sm-6">
+                                <label for="room" class="fw-bold col-form-label">Room</label>
+                                <select class="form-select" id="room" th:field="*{roomId}" required onchange="checkInputs()">
+                                    <option value="" disabled selected>Select Room</option>
+                                    <option th:each="room : ${roomList}" th:value="${room.id}" th:text="${room.name}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 my-4">
+                            <button type="submit" class="btn btn-primary" id="continueBtn" disabled>Continue</button>
+                            <a class="btn btn-danger" href="/">Cancel</a> <!-- sementara -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkInputs() {
+            const nurseId = document.getElementById('nurseId').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const roomId = document.getElementById('room') ? document.getElementById('room').value : null;
+
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.disabled = !(nurseId && startDate && endDate && roomId);
+        }
+    </script>
+</body>
+</html>
