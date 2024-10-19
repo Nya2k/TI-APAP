@@ -11,7 +11,7 @@ import apap.ti.hospitalization2206818953.model.Reservation;
 
 public interface ReservationDb extends JpaRepository<Reservation, String> {
     @Query("SELECT r FROM Reservation r WHERE r.room.id = :roomId AND r.dateIn <= :dateOut AND r.dateOut >= :dateIn")
-    List<Reservation> findByRoomIdAndDate(@Param("roomId") String roomId, @Param("dateIn") Date dateIn,@Param("dateOut") Date dateOut);
+    List<Reservation> findByRoomIdAndDateInBetween(String roomId, Date dateIn, Date dateOut);
 
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.room.id = :roomId AND " + "(:startDate <= r.dateOut AND :endDate >= r.dateIn)")
     int countReservationsInRange(@Param("roomId") String roomId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);

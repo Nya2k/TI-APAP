@@ -33,16 +33,21 @@
     <form method="get" th:action="@{/rooms/{roomId}(roomId=${room.id})}" class="flex gap-2">
         <div class="flex flex-col">
             <label for="dateIn">Reservation Date In</label>
-            <input type="text" id="dateIn" name="dateIn" th:value="${dateIn}" placeholder="DD/MM/YYYY" required />
+            <input type="text" id="dateIn" name="dateIn"
+                th:value="${#dates.format(dateIn, 'dd/MM/yyyy')}"
+                placeholder="dd/MM/yyyy" required />
         </div>
-
+    
         <div class="flex flex-col">
             <label for="dateOut">Reservation Date Out</label>
-            <input type="text" id="dateOut" name="dateOut" th:value="${dateOut}" placeholder="DD/MM/YYYY" required />
+            <input type="text" id="dateOut" name="dateOut"
+                th:value="${#dates.format(dateOut, 'dd/MM/yyyy')}"
+                placeholder="dd/MM/yyyy" required />
         </div>
-
+    
         <button type="submit" class="btn btn-primary">Apply</button>
     </form>
+    
     <p>Quota Available: <span th:text="${availableQuota}"></span></p>
     <table id="reservationsTable" class="table-auto w-full">
         <thead>
@@ -54,7 +59,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="reservation, iterStat : ${room.listReservation}">
+            <tr th:each="reservation, iterStat : ${listReservation}">
                 <td th:text="${iterStat.index + 1}"></td>
                 <td th:text="${reservation.patient.name}"></td>
                 <td th:text="${reservation.patient.gender ? 'Female' : 'Male'}"></td>

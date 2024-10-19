@@ -35,7 +35,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="reservation, iterStat : ${listReservations}" th:if="${!reservation.isDeleted}">
+                <tr th:each="reservation, iterStat : ${listReservation}" th:if="${!reservation.isDeleted}">
                     <td th:text="${iterStat.index + 1}"></td>
                     <td th:text="${reservation.id}"></td>
                     <td th:text="${reservation.room != null ? reservation.room.name : 'N/A'}"></td>

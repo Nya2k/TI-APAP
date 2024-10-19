@@ -67,7 +67,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<Reservation> findReservationsByRoomIdAndDate(String roomId, Date dateIn, Date dateOut) {
-        return reservationDb.findByRoomIdAndDate(roomId, dateIn, dateOut);
+        return reservationDb.findByRoomIdAndDateInBetween(roomId, dateIn, dateOut);
     }
 
     @Override

@@ -54,13 +54,18 @@ public class RoomController {
         Date endDate = formatter.parse(dateOut);
 
         List<Reservation> reservations = roomService.findReservationsByRoomIdAndDate(roomId, startDate, endDate);
+
         model.addAttribute("dateIn", dateIn);
         model.addAttribute("dateOut", dateOut);
-        model.addAttribute("reservations", room.getListReservation());
+        if (dateIn == null || dateOut == null) {
+            model.addAttribute("listReservation", room.getListReservation());
+        }
+        model.addAttribute("listReservation", reservations);
         model.addAttribute("availableQuota", room.getAvailableQuota());
 
         return "view-room";
     }
+
 
     @PostMapping("/rooms/{roomId}/delete")
     public String deleteRoom(@PathVariable String roomId, Model model) {
