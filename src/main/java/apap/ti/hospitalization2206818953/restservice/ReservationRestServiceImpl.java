@@ -53,6 +53,7 @@ public class ReservationRestServiceImpl implements ReservationRestService {
         reservationResponseDTO.setTotalFee(reservation.getTotalFee());
         reservationResponseDTO.setCreatedAt(reservation.getCreatedAt());
         reservationResponseDTO.setUpdatedAt(reservation.getUpdatedAt());
+        reservationResponseDTO.setDeleted(reservation.isDeleted());
         reservationResponseDTO.setTotalFee(reservation.getTotalFee());
 
         var patientResponseDTO = new PatientResponseDTO();

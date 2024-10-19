@@ -38,7 +38,7 @@
             </thead>
             <tbody>
                 <tr th:each="room, stat: ${rooms}" th:if="${room.isDeleted} == false">
-                    <th scope="row" th:text="${stat.index + 1}"></th>
+                    <th scope="row" th:text="${stat.index}"></th>
                     <td th:text="${room.id}"></td>
                     <td th:text="${room.name}"></td>
                     <td th:text="${room.maxCapacity}"></td>

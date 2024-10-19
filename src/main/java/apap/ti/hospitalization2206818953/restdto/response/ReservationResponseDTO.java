@@ -47,6 +47,8 @@ public class ReservationResponseDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Asia/Jakarta")
     private Date updatedAt;
 
+    private boolean isDeleted;
+
     public String getStatus() {
         Date now = new Date();
 

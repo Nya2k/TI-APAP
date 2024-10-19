@@ -147,4 +147,17 @@ public class ReservationController {
             return "form-create-reservation";
         }
     }
+
+    @PostMapping("/reservations/{id}/delete")
+    public String deleteReservation(@PathVariable("id") String id, Model model) {
+        try {
+            var reservation = reservationService.getReservationById(id);
+            reservationService.deleteReservation(reservation);
+            model.addAttribute("message", "Berhasil menghapus reservasi " + id);
+            return "response";
+        } catch (Exception e) {
+            model.addAttribute("message", "Gagal menghapus reservasi " + id);
+            return "response";
+        }
+    }
 }

@@ -100,7 +100,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void deleteReservation(Reservation reservation) {
-        reservationDb.delete(reservation);
+        reservation.setDeleted(true);
+        reservationDb.save(reservation);
     }
 
     @Override

@@ -23,7 +23,9 @@
                             <!-- sementara -->
                             <a href="/" class="btn btn-primary">Update Room</a>
                             <a href="/" class="btn btn-primary">Update Facility</a>
-                            <a href="/" class="btn btn-danger">Delete</a>
+                            <form th:action="@{/reservations/{id}/delete(id=${reservation.id})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
                         </div>
                     </div>
 
@@ -99,14 +101,14 @@
                             <div class="row mb-3">
                                 <label class="col-sm-4 col-form-label">Total Fee</label>
                                 <div class="col-sm-8">
-                                    <span id="totalFee" data-toggle="modal" data-target="#feeModal" th:text="${reservation.finalFee}" class="mt-2 cursor-pointer text-blue-500 underline"></span>
+                                    <span id="totalFee" data-toggle="modal" data-target="#feeModal" th:text="${reservation.finalFee}" class="mt-2 cursor-pointer text-blue-500"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="text-center">
-                        <a href="/reservations/create?exist=true" class="btn btn-primary">Create Reservation</a>
+                        <a href="/reservations/create" class="btn btn-primary">Create Reservation</a>
                     </div>
 
                     <!-- Modal Total Fee -->
