@@ -35,11 +35,11 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="reservation, iterStat : ${reservations}">
+                <tr th:each="reservation, iterStat : ${listReservations}">
                     <td th:text="${iterStat.index + 1}"></td>
                     <td th:text="${reservation.id}"></td>
-                    <td th:text="${reservation.room.name}"></td>
-                    <td th:text="${reservation.patient.name}"></td>
+                    <td th:text="${reservation.room != null ? reservation.room.name : 'N/A'}"></td>
+                    <td th:text="${reservation.patient != null ? reservation.patient.name : 'N/A'}"></td>
                     <td th:text="${#dates.format(reservation.dateIn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${#dates.format(reservation.dateOut, 'dd/MM/yyyy')}"></td>
                     <td th:text="${reservation.status}"></td>

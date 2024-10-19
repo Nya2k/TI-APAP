@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import apap.ti.hospitalization2206818953.model.Patient;
 import apap.ti.hospitalization2206818953.repository.PatientDb;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PatientServiceImpl implements PatientService {

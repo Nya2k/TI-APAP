@@ -1,15 +1,19 @@
 package apap.ti.hospitalization2206818953.restservice;
 
-import apap.ti.hospitalization2206818953.restdto.response.ReservationResponseDTO;
-import apap.ti.hospitalization2206818953.restdto.response.FacilityResponseDTO;
-import apap.ti.hospitalization2206818953.model.Reservation;
-import apap.ti.hospitalization2206818953.repository.ReservationDb;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import apap.ti.hospitalization2206818953.model.Reservation;
+import apap.ti.hospitalization2206818953.repository.ReservationDb;
+import apap.ti.hospitalization2206818953.restdto.response.FacilityResponseDTO;
+import apap.ti.hospitalization2206818953.restdto.response.NurseResponseDTO;
+import apap.ti.hospitalization2206818953.restdto.response.PatientResponseDTO;
+import apap.ti.hospitalization2206818953.restdto.response.ReservationResponseDTO;
+import apap.ti.hospitalization2206818953.restdto.response.RoomResponseDTO;
 
 @Service
 @Transactional
@@ -26,6 +30,7 @@ public class ReservationRestServiceImpl implements ReservationRestService {
         listReservation.forEach(reservation -> {
             var reservationResponseDTO = reservationToReservationResponseDTO(reservation);
             listReservationResponseDTO.add(reservationResponseDTO);
+
         });
 
         return listReservationResponseDTO;
@@ -48,6 +53,25 @@ public class ReservationRestServiceImpl implements ReservationRestService {
         reservationResponseDTO.setTotalFee(reservation.getTotalFee());
         reservationResponseDTO.setCreatedAt(reservation.getCreatedAt());
         reservationResponseDTO.setUpdatedAt(reservation.getUpdatedAt());
+        reservationResponseDTO.setTotalFee(reservation.getTotalFee());
+
+        var patientResponseDTO = new PatientResponseDTO();
+        patientResponseDTO.setId(reservation.getPatient().getId());
+        patientResponseDTO.setName(reservation.getPatient().getName());
+        patientResponseDTO.setNIK(reservation.getPatient().getNIK());
+        patientResponseDTO.setEmail(reservation.getPatient().getEmail());
+        patientResponseDTO.setGender(reservation.getPatient().isGender());
+        reservationResponseDTO.setPatient(patientResponseDTO);
+
+        var roomResponseDTO = new RoomResponseDTO();
+        roomResponseDTO.setId(reservation.getRoom().getId());
+        roomResponseDTO.setName(reservation.getRoom().getName());
+        roomResponseDTO.setPricePerDay(reservation.getRoom().getPricePerDay());
+        reservationResponseDTO.setRoom(roomResponseDTO);
+
+        var nurseResponseDTO = new NurseResponseDTO();
+        nurseResponseDTO.setName(reservation.getAssignedNurse().getName());
+        reservationResponseDTO.setNurse(nurseResponseDTO);
 
         if (reservation.getListFacility() != null) {
             var listFacilityResponseDTO = new ArrayList<FacilityResponseDTO>();

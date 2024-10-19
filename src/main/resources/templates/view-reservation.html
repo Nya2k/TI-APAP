@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+</head>
+<body class="w-full h-screen justify-center items-center">
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="card" style="width: 60rem;">
+                <div class="card-body">
+                    <div class="header-bar mb-4">
+                        <h3 class="d-inline">Reservation <span th:text="${reservation.id}"></span> Detail</h3>
+                        <div class="float-right action-buttons">
+                            <!-- sementara -->
+                            <a href="/" class="btn btn-primary">Update Room</a>
+                            <a href="/" class="btn btn-primary">Update Facility</a>
+                            <a href="/" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+
+                    <!-- Reservation details -->
+                    <div class="row mb-3">
+                        <div class="col-sm-6">
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">ID</label>
+                                <div class="col-sm-8">
+                                    <span th:text="${reservation.id}"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Patient Name</label>
+                                <div class="col-sm-8">
+                                    <span th:text="${reservation.patient.name}"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Email</label>
+                                <div class="col-sm-8">
+                                    <span th:text="${reservation.patient.email}"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Gender</label>
+                                <div class="col-sm-8">
+                                    <span th:text="${reservation.patient.gender}"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Room Name</label>
+                                <div class="col-sm-8">
+                                    <a th:href="@{/rooms/{roomId}(roomId=${reservation.room.id})}" class="text-primary" th:text="${reservation.room.name}"></a>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Assigned Nurse</label>
+                                <div class="col-sm-8">
+                                    <span th:text="${reservation.nurse.name}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Date In</label>
+                                <div class="col-sm-8">
+                                    <span th:text="${reservation.dateIn}"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Date Out</label>
+                                <div class="col-sm-8">
+                                    <span th:text="${reservation.dateOut}"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Status</label>
+                                <div class="col-sm-8">
+                                    <span th:text="${reservation.status}"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Facilities</label>
+                                <div class="col-sm-8">
+                                    <span th:each="facility, iterStat : ${reservation.listFacility}">
+                                        <span th:text="${facility.name}"></span>
+                                        <span th:if="${!iterStat.last}">, </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Total Fee</label>
+                                <div class="col-sm-8">
+                                    <span id="totalFee" data-toggle="modal" data-target="#feeModal" th:text="${reservation.finalFee}" class="mt-2 cursor-pointer text-blue-500 underline"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="/reservations/create?exist=true" class="btn btn-primary">Create Reservation</a>
+                    </div>
+
+                    <!-- Modal Total Fee -->
+                    <div class="modal fade" id="feeModal" tabindex="-1" role="dialog" aria-labelledby="feeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header flex text-center">
+                                    <h5 class="modal-title" id="feeModalLabel">Fee Details</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row mb-2">
+                                        <div class="col-sm-8">
+                                            <span th:text="${reservation.room.name}"></span>
+                                        </div>
+                                        <div class="col-sm-4 text-right">
+                                            <span th:text="'Rp' + ${reservation.room.pricePerDay} + '/Day'"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-8">
+                                            <span>Total ( <span th:text="${reservation.totalDays}"></span> days )</span>
+                                        </div>
+                                        <div class="col-sm-4 text-right">
+                                            <span th:text="'Rp' + ${reservation.totalFee}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2" th:each="facility : ${reservation.listFacility}">
+                                        <div class="col-sm-8">
+                                            <span th:text="${facility.name}"></span>
+                                        </div>
+                                        <div class="col-sm-4 text-right">
+                                            <span th:text="'Rp' + ${facility.fee}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-8 font-weight-bold">
+                                            <span>Total:</span>
+                                        </div>
+                                        <div class="col-sm-4 text-right font-weight-bold">
+                                            <span th:text="'Rp' + ${reservation.finalFee}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer flex justify-center">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Back</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const totalFeeElement = document.querySelector('[th\\:text="${reservation.finalFee}"]');
+    
+            if (totalFeeElement) {
+                totalFeeElement.addEventListener('click', function() {
+                    $('#feeModal').modal('show');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

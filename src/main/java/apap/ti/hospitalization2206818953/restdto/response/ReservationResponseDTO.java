@@ -3,6 +3,7 @@ package apap.ti.hospitalization2206818953.restdto.response;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -21,10 +22,13 @@ public class ReservationResponseDTO {
     private UUID patientId;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private UUID nurseId;
+    private NurseResponseDTO nurse;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String roomId;
+    private RoomResponseDTO room;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private PatientResponseDTO patient;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<FacilityResponseDTO> listFacility;
@@ -42,4 +46,31 @@ public class ReservationResponseDTO {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Asia/Jakarta")
     private Date updatedAt;
+
+    public String getStatus() {
+        Date now = new Date();
+
+        if (now.after(dateOut)) {
+            return "Done";
+        } else if (now.before(dateIn)) {
+            return "Upcoming";
+        } else {
+            return "Ongoing";
+        }
+    }
+
+    public double getFinalFee() {
+        double finalFee = totalFee;
+
+        for (FacilityResponseDTO facility : listFacility) {
+            finalFee += facility.getFee();
+        }
+
+        return finalFee;
+    }
+
+    public long getTotalDays() {
+        long diff = dateOut.getTime() - dateIn.getTime();
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+    }
 }

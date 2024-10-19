@@ -26,7 +26,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "patient")
 public class Patient {
-    @Id 
+    @Id
     private UUID id = UUID.randomUUID();
 
     @Size(max = 16)

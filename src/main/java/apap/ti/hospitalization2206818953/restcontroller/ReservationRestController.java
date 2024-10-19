@@ -1,15 +1,19 @@
 package apap.ti.hospitalization2206818953.restcontroller;
 
-import apap.ti.hospitalization2206818953.restdto.response.BaseResponseDTO;
-import apap.ti.hospitalization2206818953.restdto.response.ReservationResponseDTO;
-import apap.ti.hospitalization2206818953.restservice.ReservationRestService;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
-import java.util.List;
+import apap.ti.hospitalization2206818953.restdto.response.BaseResponseDTO;
+import apap.ti.hospitalization2206818953.restdto.response.ReservationResponseDTO;
+import apap.ti.hospitalization2206818953.restservice.ReservationRestService;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -32,7 +36,7 @@ public class ReservationRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> detailReservation(@RequestParam("id") String id) {
+    public ResponseEntity<?> detailReservation(@PathVariable("id") String id) {
         var baseResponseDTO = new BaseResponseDTO<ReservationResponseDTO>();
 
         ReservationResponseDTO reservation = reservationRestService.getReservationById(id);

@@ -1,5 +1,6 @@
 package apap.ti.hospitalization2206818953.controller;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -38,11 +40,37 @@ public class ReservationController {
     @Autowired
     private ReservationService reservationService;
 
+    // @GetMapping("/reservations")
+    // public String viewAllReservations(Model model) {
+    //     List<Reservation> reservationList = reservationService.getAllReservations();
+    //     model.addAttribute("reservationList", reservationList);
+    //     return "viewall-reservation";
+    // }
+
     @GetMapping("/reservations")
-    public String viewAllReservations(Model model) {
-        List<Reservation> reservationList = reservationService.getAllReservations();
-        model.addAttribute("reservationList", reservationList);
-        return "viewall-reservation";
+    public String listRestReservations(Model model) {
+        try {
+            var listReservations = reservationService.getAllReservationsFromRest();
+            model.addAttribute("listReservations", listReservations);
+            return "viewall-reservation";
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
+            return "response";
+        }
+    }
+
+    @GetMapping("/reservations/{id}")
+    public String viewReservationDetail(@PathVariable("id") String id, Model model) {
+        try {
+            var reservation = reservationService.getReservationByIdFromRest(id);
+            DecimalFormat df = new DecimalFormat("#,###");
+            model.addAttribute("formattedTotalFee", df.format(reservation.getTotalFee()));
+            model.addAttribute("reservation", reservation);
+            return "view-reservation";
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
+            return "response";
+        }
     }
 
     @GetMapping("/reservations/create")
