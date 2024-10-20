@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Reservation Details</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
     <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
 </head>
 <body class="w-full h-screen justify-center items-center">
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-    <div class="container mt-4">
+    <div class="container mt-20 pb-2">
         <div class="row justify-content-center">
             <div class="card" style="width: 60rem;">
                 <div class="card-body">
@@ -105,14 +100,12 @@
                             <div class="row mb-3">
                                 <label class="col-sm-4 col-form-label">Total Fee</label>
                                 <div class="col-sm-8">
-                                    <span id="totalFee" data-toggle="modal" data-target="#feeModal" th:text="${reservation.finalFee}" class="mt-2 cursor-pointer text-blue-500"></span>
+                                    <span id="totalFee" data-toggle="modal" data-target="#feeModal"
+                                        th:text="${'Rp' + #numbers.formatDecimal(reservation.finalFee, 0, 'COMMA', 0, 'POINT')}"
+                                        class="mt-2 cursor-pointer text-blue-500"></span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="text-center">
-                        <a href="/reservations/create" class="btn btn-primary">Create Reservation</a>
                     </div>
 
                     <!-- Modal Total Fee -->

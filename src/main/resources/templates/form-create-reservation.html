@@ -2,10 +2,10 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <title>Create Reservation</title>
     <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
     <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Create Reservation</title>
 </head>
 
 <body>
@@ -38,7 +38,7 @@
                                 <input class="form-control" type="date" id="dateIn" th:field="*{dateIn}" 
                                 th:value="${#dates.format(reservationDTO.dateIn, 'yyyy-MM-dd')}" required 
                                     onchange="checkInputs()"/>
-                                </div>
+                            </div>
                             <div class="col-sm-4">
                                 <label for="dateOut" class="fw-bold col-form-label">Reservation Date Out</label>
                                 <input class="form-control" type="date" id="dateOut" th:field="*{dateOut}" 

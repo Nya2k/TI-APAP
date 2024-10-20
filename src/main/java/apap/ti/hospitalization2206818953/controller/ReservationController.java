@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,20 +33,23 @@ import apap.ti.hospitalization2206818953.service.RoomService;
 
 @Controller
 public class ReservationController {
-    @Autowired
-    private PatientService patientService;
+    private final PatientService patientService;
+    private final RoomService roomService;
+    private final NurseService nurseService;
+    private final ReservationService reservationService;
+    private final FacilityService facilityService;
 
-    @Autowired
-    private RoomService roomService;
-
-    @Autowired
-    private NurseService nurseService;
-
-    @Autowired
-    private ReservationService reservationService;
-
-    @Autowired
-    private FacilityService facilityService;
+    public ReservationController(PatientService patientService,
+                                RoomService roomService,
+                                NurseService nurseService,
+                                ReservationService reservationService,
+                                FacilityService facilityService) {
+        this.patientService = patientService;
+        this.roomService = roomService;
+        this.nurseService = nurseService;
+        this.reservationService = reservationService;
+        this.facilityService = facilityService;
+    }
 
     @GetMapping("/reservations")
     public String listRestReservations(Model model) {

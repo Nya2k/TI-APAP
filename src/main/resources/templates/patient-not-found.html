@@ -3,14 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
+    <title>Patient Not Found</title>
     <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
     <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Patient Not Found</title>
 </head>
 
 <body class="flex w-full h-screen items-center justify-center bg-gray-100">
-    <div class="text-center flex gap-2">
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <div class="text-center flex flex-col gap-2">
         <h1 class="text-2xl font-bold">Patient Not Found</h1>
         <h4 class="text-lg">Please insert this identity as a new patient before making the reservation.</h4>
         <a th:href="@{'/reservations/create?exist=false&nik=' + ${nik}}" class="btn btn-primary">Insert New Patient</a>
