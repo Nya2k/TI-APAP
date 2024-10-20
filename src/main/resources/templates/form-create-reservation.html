@@ -34,23 +34,27 @@
 
                         <div class="row my-3">
                             <div class="col-sm-4">
-                                <label for="startDate" class="fw-bold col-form-label">Reservation Date In</label>
-                                <input class="form-control" type="date" id="startDate" th:field="*{startDate}" 
-                                    th:value="${#dates.format(reservationDTO.startDate, 'yyyy-MM-dd')}" required 
+                                <label for="dateIn" class="fw-bold col-form-label">Reservation Date In</label>
+                                <input class="form-control" type="date" id="dateIn" th:field="*{dateIn}" 
+                                th:value="${#dates.format(reservationDTO.dateIn, 'yyyy-MM-dd')}" required 
                                     onchange="checkInputs()"/>
-                            </div>
+                                </div>
                             <div class="col-sm-4">
-                                <label for="endDate" class="fw-bold col-form-label">Reservation Date Out</label>
-                                <input class="form-control" type="date" id="endDate" th:field="*{endDate}" 
-                                    th:value="${#dates.format(reservationDTO.endDate, 'yyyy-MM-dd')}" required 
-                                    onchange="checkInputs()"/>
+                                <label for="dateOut" class="fw-bold col-form-label">Reservation Date Out</label>
+                                <input class="form-control" type="date" id="dateOut" th:field="*{dateOut}" 
+                                th:value="${#dates.format(reservationDTO.dateOut, 'yyyy-MM-dd')}" required 
+                                onchange="checkInputs()"/>
+                            </div>
+                            <div class="col-sm-4 hidden">
+                                <label for="nik" class="fw-bold col-form-label">NIK</label>
+                                <input th:value="${reservationDTO.patientNIK}" type="text" id="nik" name="nik" placeholder="NIK" class="mb-4 p-2 border rounded" onchange="checkInputs()" required>
                             </div>
                             <div class="col-sm-4 d-flex align-items-end">
-                                <a class="btn btn-secondary ml-2" 
-                                    th:href="@{/reservations/create(exist=true, startDate=${#dates.format(startDate, 'yyyy-MM-dd')}, endDate=${#dates.format(endDate, 'yyyy-MM-dd')}, nurseId=${reservationDTO.nurseId})}" 
-                                    onclick="this.href=this.href
-                                        .replace(/startDate=[^&]*/, 'startDate=' + encodeURIComponent(document.getElementById('startDate').value))
-                                        .replace(/endDate=[^&]*/, 'endDate=' + encodeURIComponent(document.getElementById('endDate').value))
+                                <a class="btn btn-secondary ml-2"
+                                th:href="@{/reservations/create(exist=true, dateIn=${#dates.format(dateIn, 'yyyy-MM-dd')}, dateOut=${#dates.format(dateOut, 'yyyy-MM-dd')}, nurseId=${reservationDTO.nurseId}, nik=${reservationDTO.patientNIK})}" 
+                                onclick="this.href=this.href
+                                        .replace(/dateIn=[^&]*/, 'dateIn=' + encodeURIComponent(document.getElementById('dateIn').value))
+                                        .replace(/dateOut=[^&]*/, 'dateOut=' + encodeURIComponent(document.getElementById('dateOut').value))
                                         .replace(/nurseId=[^&]*/, 'nurseId=' + encodeURIComponent(document.getElementById('nurseId').value));">
                                     Search
                                 </a>
@@ -69,7 +73,7 @@
 
                         <div class="flex gap-3 my-4">
                             <button type="submit" class="btn btn-primary" id="continueBtn" disabled>Continue</button>
-                            <a class="btn btn-danger" href="/">Cancel</a> <!-- sementara -->
+                            <a class="btn btn-danger" href="/reservations">Cancel</a>
                         </div>
                     </form>
                 </div>
@@ -80,12 +84,13 @@
     <script>
         function checkInputs() {
             const nurseId = document.getElementById('nurseId').value;
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
+            const dateIn= document.getElementById('dateIn').value;
+            const dateOut = document.getElementById('dateOut').value;
             const roomId = document.getElementById('room') ? document.getElementById('room').value : null;
+            const nik = document.getElementById('nik').value;
 
             const continueBtn = document.getElementById('continueBtn');
-            continueBtn.disabled = !(nurseId && startDate && endDate && roomId);
+            continueBtn.disabled = !(nurseId && dateIn&& dateOut && roomId);
         }
     </script>
 </body>

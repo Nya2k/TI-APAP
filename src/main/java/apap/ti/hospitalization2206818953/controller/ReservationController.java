@@ -20,6 +20,7 @@ import apap.ti.hospitalization2206818953.dto.request.AddPatientRequestDTO;
 import apap.ti.hospitalization2206818953.dto.request.AddReservationRequestDTO;
 import apap.ti.hospitalization2206818953.model.Nurse;
 import apap.ti.hospitalization2206818953.model.Patient;
+import apap.ti.hospitalization2206818953.model.Reservation;
 import apap.ti.hospitalization2206818953.model.Room;
 import apap.ti.hospitalization2206818953.service.NurseService;
 import apap.ti.hospitalization2206818953.service.PatientService;
@@ -40,18 +41,11 @@ public class ReservationController {
     @Autowired
     private ReservationService reservationService;
 
-    // @GetMapping("/reservations")
-    // public String viewAllReservations(Model model) {
-    //     List<Reservation> reservationList = reservationService.getAllReservations();
-    //     model.addAttribute("reservationList", reservationList);
-    //     return "viewall-reservation";
-    // }
-
     @GetMapping("/reservations")
     public String listRestReservations(Model model) {
         try {
-            var listReservations = reservationService.getAllReservationsFromRest();
-            model.addAttribute("listReservations", listReservations);
+            var listReservation = reservationService.getAllReservationsFromRest();
+            model.addAttribute("listReservation", listReservation);
             return "viewall-reservation";
         } catch (Exception e) {
             model.addAttribute("message", e.getMessage());
@@ -85,6 +79,8 @@ public class ReservationController {
             List<Nurse> nurseList = nurseService.getAllNurses();
             model.addAttribute("reservationDTO", reservationDTO);
             model.addAttribute("nurseList", nurseList);
+            model.addAttribute("nik", nik);
+            reservationDTO.setPatientNIK(nik);
             if (dateIn != null && dateOut != null && !dateIn.after(dateOut)) {
                 List<Room> availableRooms = roomService.getAvailableRooms(dateIn, dateOut);
                 model.addAttribute("roomList", availableRooms);
@@ -106,13 +102,29 @@ public class ReservationController {
                                             @RequestParam(value = "nik", required = false) String nik,
                                             @RequestParam(value = "dateIn", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateIn,
                                             @RequestParam(value = "dateOut", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOut,
+                                            @RequestParam(value = "roomId", required = false) String roomId,
                                             @ModelAttribute("patientDTO") AddPatientRequestDTO patientDTO,
                                             @ModelAttribute("reservationRequest") AddReservationRequestDTO reservationDTO, Model model) {
         if (dateIn != null && dateOut != null && !dateIn.after(dateOut)) {
             List<Room> roomList = roomService.getAvailableRooms(dateIn, dateOut);
             model.addAttribute("roomList", roomList);
         }
-        if (nik != null) {
+        if (reservationDTO != null && reservationDTO.getDateOut() != null) {
+            var reservation = new Reservation();
+            reservation.setId(generateReservationId(reservationDTO.getDateIn(), reservationDTO.getDateOut(), nik));
+            reservation.setDateIn(reservationDTO.getDateIn());
+            reservation.setDateOut(reservationDTO.getDateOut());
+            reservation.setRoom(roomService.getRoomById(reservationDTO.getRoomId()));
+            reservation.setAssignedNurse(nurseService.getNurseById(reservationDTO.getNurseId()));
+            reservation.setPatient(patientService.getPatientByNIK(nik));
+            
+            reservation.setTotalFee(0);
+            reservation.setCreatedAt(new Date());
+            reservation.setUpdatedAt(new Date());
+            reservationService.addReservation(reservation);
+            model.addAttribute("reservation", reservation);
+            return "form-create-reservation-2";
+        } else if (nik != null) {
             Patient patient = patientService.getPatientByNIK(nik);
             if (patient != null) {
                 model.addAttribute("patient", patient);
@@ -121,20 +133,6 @@ public class ReservationController {
                 model.addAttribute("nik", nik);
                 return "patient-not-found";
             }
-        } else if (reservationDTO != null) {
-            // var reservation = new Reservation();
-            // reservation.setId(generateReservationId(reservationDTO.getDateIn(), reservationDTO.getDateOut(), patientDTO.getNIK()));
-            // reservation.setDateIn(reservationDTO.getDateIn());
-            // reservation.setDateOut(reservationDTO.getDateOut());
-            // reservation.setPatient(patientService.getPatientById(reservationDTO.getPatientId()));
-            // reservation.setAssignedNurse(nurseService.getNurseById(reservationDTO.getNurseId()));
-            // reservation.setRoom(roomService.getRoomById(reservationDTO.getRoomId()));
-            // reservation.setCreatedAt(new Date());
-            // reservation.setUpdatedAt(new Date());
-            // reservationService.addReservation(reservation);
-
-            model.addAttribute("message", "Reservation created successfully");
-            return "response";
         } else {
             var patient = new Patient();
             patient.setName(patientDTO.getName());
@@ -145,8 +143,30 @@ public class ReservationController {
             patient.setCreatedAt(new Date());
             patient.setUpdatedAt(new Date());
             patientService.addPatient(patient);
+
+            var reservationDTO2 = new AddReservationRequestDTO();
+            List<Nurse> nurseList = nurseService.getAllNurses();
+            model.addAttribute("reservationDTO", reservationDTO2);
+            model.addAttribute("nurseList", nurseList);
+            model.addAttribute("nik", patientDTO.getNIK());
+            reservationDTO2.setPatientNIK(nik);
             return "form-create-reservation";
         }
+    }
+
+    @PostMapping("/reservations/create/done")
+    public String postCreateReservationDone(@ModelAttribute("reservation") Reservation reservation,
+                                            @RequestParam List<String> facilities, // Assuming facilities are sent as a list
+                                            Model model) {
+        for (String facility : facilities) {
+
+        }
+        
+        
+        // reservationService.addReservation(reservation);
+        
+        model.addAttribute("message", "Berhasil menyimpan reservasi");
+        return "response";
     }
 
     private String generateReservationId(Date dateIn, Date dateOut, String nik) {
@@ -168,6 +188,7 @@ public class ReservationController {
         int reservationCount = reservationService.countReservations();
         
         String reservationId = String.format("RES%s%s%s%s", daysDiff, reservationDay, nikLastFour, String.format("%04d", reservationCount + 1));
+        System.out.println(reservationId);
         
         return reservationId;
     }

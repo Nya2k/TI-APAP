@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class AddReservationRequestDTO {
     private UUID patientId;
     private UUID nurseId;
+    private String patientNIK;
     private String roomId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateIn;

@@ -76,11 +76,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Room> getAvailableRooms(Date startDate, Date endDate) {
+    public List<Room> getAvailableRooms(Date dateIn, Date dateOut) {
         List<Room> rooms = getAllRoom();
 
         return rooms.stream().filter(room -> {
-            int currentReservations = reservationDb.countReservationsInRange(room.getId(), startDate, endDate);
+            int currentReservations = reservationDb.countReservationsInRange(room.getId(), dateIn, dateOut);
             return room.getMaxCapacity() > currentReservations;
         }).toList();
     }

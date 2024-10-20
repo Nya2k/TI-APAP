@@ -45,7 +45,7 @@
                             </div>
                         </div>
                         <div class="text-center">
-                            <a href="/reservations/create?exist=true" class="btn btn-primary">Create Reservation</a>
+                            <a th:href="@{'/reservations/create?exist=true&nik=' + ${patient.NIK}}" class="btn btn-primary">Create Reservation</a>
                         </div>
                     </form>
                 </div>

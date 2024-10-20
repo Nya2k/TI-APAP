@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Tambah Fasilitas</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <div class="container">
+        <div class="text-center my-4">
+            <h2>Add Facilities (Opsional)</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="card" style="width: 60rem;">
+                <div class="card-body">
+                    <form th:action="@{/reservation/create}" th:object="${reservation}" method="POST">
+                        <div class="row my-3">
+                            <label for="roomName" class="col-sm-2 fw-bold col-form-label">Room</label>
+                            <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="text" id="roomName" th:field="*{reservation.room.name}" />
+                            </div>
+                        </div>
+
+                        <div class="form-group my-3">
+                            <div class="col-sm-10 d-flex justify-content-between">
+                                <h5>Facilities</h5>
+                                <button class="btn btn-primary" type="button" id="addRowButton">Tambah Row</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group column my-3"></div>
+                            <label for="facility" class="col-sm-2 fw-bold col-form-label">Facilities</label>
+                            <table class="table">
+                                <th class="d-flex justify-content-end">
+                                    <button class="btn btn-primary" type="submit" name="addRow">Tambah Row</button>
+                                </th>
+                                <tr th:each="facility, iterationStatus : *{listFacilities}">
+                                    <td>
+                                        <select th:field="*{listFacilities[__${iterStat.index}__].id}" class="form-control">
+                                            <option th:each="facility : ${availableFacilities}" 
+                                                th:value="${facility.id}"
+                                                th:text="${facility.name} + ' (+Rp ' + ${facility.fee} + ')'"></option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button th:value="${iterationStatus.index}" class="btn btn-danger"
+                                            type="submit" name="deleteRow">Hapus</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="text-center m-3">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <a class="btn btn-primary" href="#" th:href="@{/proyek/create}">Previous</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
