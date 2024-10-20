@@ -7,4 +7,5 @@ import java.util.List;
 public interface ReservationRestService {
     List<ReservationResponseDTO> getAllReservations();
     ReservationResponseDTO getReservationById(String idReservation);
+    List<Integer> getReservationStats(String period, int year) throws Exception;
 }

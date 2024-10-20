@@ -11,6 +11,6 @@ public interface PatientService {
     Patient getPatientById(UUID idPatient);
     Patient updatePatient(Patient patient);
     void deletePatient(Patient patient);
-    int countPatients();
+    int countPatientsByIsDeleted();
     Patient getPatientByNIK(String nik);
 }

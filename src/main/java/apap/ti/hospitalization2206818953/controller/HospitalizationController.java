@@ -22,9 +22,9 @@ public class HospitalizationController {
     
     @GetMapping(value = "/")
     public String home(Model model) {
-        model.addAttribute("totalReservations", reservationService.countReservations());
-        model.addAttribute("totalRooms", roomService.countRooms());
-        model.addAttribute("totalPatients", patientService.countPatients());
+        model.addAttribute("totalReservations", reservationService.countReservationsByIsDeleted());
+        model.addAttribute("totalRooms", roomService.countRoomsByIsDeleted());
+        model.addAttribute("totalPatients", patientService.countPatientsByIsDeleted());
         return "home.html";
     }
 }

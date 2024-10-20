@@ -12,6 +12,8 @@ public interface ReservationService {
     Reservation updateReservation(Reservation reservation);
     void deleteReservation(Reservation reservation);
     int countReservations();
+    int countReservationsByIsDeleted(); // cuma yg isDeleted false
     List<ReservationResponseDTO> getAllReservationsFromRest() throws Exception;
     ReservationResponseDTO getReservationByIdFromRest(String idReservation) throws Exception;
+    List<Integer> getReservationStatsFromRest(String period, int year) throws Exception;
 }

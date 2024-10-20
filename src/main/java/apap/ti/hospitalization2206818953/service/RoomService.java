@@ -13,6 +13,7 @@ public interface RoomService {
     Room updateRoom(Room room);
     void deleteRoom(Room room);
     int countRooms();
+    int countRoomsByIsDeleted();
     List<Reservation> findReservationsByRoomIdAndDate(String roomId, Date dateIn, Date dateOut);
     List<Room> getAvailableRooms(Date dateIn, Date dateOut);
 }

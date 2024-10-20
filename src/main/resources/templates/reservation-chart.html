@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation Chart</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <div class="container">
+        <h1 class="text-center">Chart</h1>
+        
+        <div class="d-flex mb-3">
+            <div>
+                <label for="periodInput" class="mr-2">Period:</label>
+                <select id="periodInput" class="form-control d-inline-block" style="width: auto;">
+                    <option value="monthly" selected>Monthly</option>
+                    <option value="quarter">Quarter</option>
+                </select>
+            </div>
+            <div class="ml-3">
+                <label for="yearInput" class="mr-2">Year:</label>
+                <input type="number" id="yearInput" value="${year != null ? year : 2024}" min="2000" max="2100" class="form-control d-inline-block" style="width: auto;" required>
+            </div>
+            <button id="applyBtn" class="btn btn-primary ml-3">Apply</button>
+        </div>
+        
+        <canvas id="reservationChart"></canvas>
+    </div>
+    
+    <script>
+        const ctx = document.getElementById('reservationChart').getContext('2d');
+        let reservationChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Number of Reservations',
+                    data: [],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function updateChart(data, labels) {
+            reservationChart.data.labels = labels;
+            reservationChart.data.datasets[0].data = data;
+            reservationChart.update();
+        }
+
+        function fetchAndRenderChart(period, year) {
+            fetch(`/api/reservations/chart?period=${period}&year=${year}`)
+                .then(response => response.json())
+                .then(data => {
+                    const stats = data.data;
+                    const labels = period === 'monthly'
+                        ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                        : ['Q1', 'Q2', 'Q3', 'Q4'];
+                    
+                    updateChart(stats, labels);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        window.onload = function() {
+            fetchAndRenderChart('monthly', 2024);
+        };
+
+        document.getElementById('applyBtn').addEventListener('click', function() {
+            const period = document.getElementById('periodInput').value;
+            let year = document.getElementById('yearInput').value;
+
+            if (!period) {
+                period = 'monthly';
+            }
+            if (!year) {
+                year = 2024;
+            }
+
+            fetchAndRenderChart(period, year);
+        });
+    </script>
+</body>
+</html>

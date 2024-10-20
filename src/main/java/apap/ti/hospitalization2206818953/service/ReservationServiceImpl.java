@@ -20,11 +20,11 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final WebClient webClient;
 
-        public ReservationServiceImpl(WebClient.Builder webClientBuilder) {
-            this.webClient = webClientBuilder
-                            .baseUrl("http://localhost:8080/api")
-                            .build();
-        }
+    public ReservationServiceImpl(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder
+                        .baseUrl("http://localhost:8080/api")
+                        .build();
+    }
 
     @Override
     public Reservation addReservation(Reservation reservation) {
@@ -107,5 +107,34 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public int countReservations() {
         return (int) reservationDb.count();
+    }
+
+    @Override
+    public int countReservationsByIsDeleted() {
+        return (int) reservationDb.countByIsDeletedFalse();
+    }
+
+    @Override
+    public List<Integer> getReservationStatsFromRest(String period, int year) throws Exception {
+        var response = webClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                    .path("/reservations/chart")
+                    .queryParam("period", period)
+                    .queryParam("year", year)
+                    .build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<BaseResponseDTO<List<Integer>>>() {})
+                .block();
+
+        if (response == null) {
+            throw new Exception("Failed to consume API getReservationStats");
+        }
+
+        if (response.getStatus() != 200) {
+            throw new Exception(response.getMessage());
+        }
+
+        return response.getData();
     }
 }

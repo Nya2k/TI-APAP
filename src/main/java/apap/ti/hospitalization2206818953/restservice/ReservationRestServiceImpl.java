@@ -1,5 +1,6 @@
 package apap.ti.hospitalization2206818953.restservice;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,5 +90,32 @@ public class ReservationRestServiceImpl implements ReservationRestService {
         }
 
         return reservationResponseDTO;
+    }
+
+
+
+    @Override
+    public List<Integer> getReservationStats(String period, int year) throws Exception {
+        List<Reservation> reservations = reservationDb.findByYear(year);
+
+        List<Integer> stats = new ArrayList<>();
+        if ("monthly".equalsIgnoreCase(period)) {
+            for (int i = 0; i < 12; i++) stats.add(0);
+            for (Reservation reservation : reservations) {
+                int month = reservation.getDateIn().toInstant().atZone(ZoneId.systemDefault()).getMonthValue() - 1;
+                stats.set(month, stats.get(month) + 1);
+            }
+        } else if ("quarter".equalsIgnoreCase(period)) {
+            for (int i = 0; i < 4; i++) stats.add(0);
+            for (Reservation reservation : reservations) {
+                int month = reservation.getDateIn().toInstant().atZone(ZoneId.systemDefault()).getMonthValue();
+                int quarter = (month - 1) / 3;
+                stats.set(quarter, stats.get(quarter) + 1);
+            }
+        } else {
+            throw new Exception("Invalid period type");
+        }
+
+        return stats;
     }
 }

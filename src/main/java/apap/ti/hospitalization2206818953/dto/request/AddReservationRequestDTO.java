@@ -17,7 +17,7 @@ public class AddReservationRequestDTO {
     private UUID nurseId;
     private String roomId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
-    @DateTimeFormat(pattern = "yyyy-MM-dd") 
-    private Date endDate;
+    private Date dateIn;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dateOut;
 }

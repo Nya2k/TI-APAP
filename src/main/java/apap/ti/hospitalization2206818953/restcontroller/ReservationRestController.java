@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import apap.ti.hospitalization2206818953.restdto.response.BaseResponseDTO;
@@ -53,5 +54,25 @@ public class ReservationRestController {
         baseResponseDTO.setTimestamp(new Date());
         
         return new ResponseEntity<>(baseResponseDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/chart")
+    public ResponseEntity<?> getReservationStats(@RequestParam("period") String period, @RequestParam("year") int year
+    ) {
+        var baseResponseDTO = new BaseResponseDTO<>();
+        
+        try {
+            List<Integer> stats = reservationRestService.getReservationStats(period, year);
+            baseResponseDTO.setStatus(HttpStatus.OK.value());
+            baseResponseDTO.setData(stats);
+            baseResponseDTO.setMessage("Reservation stats berhasil ditemukan");
+            baseResponseDTO.setTimestamp(new Date());
+            return new ResponseEntity<>(baseResponseDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            baseResponseDTO.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            baseResponseDTO.setMessage("Error: " + e.getMessage());
+            baseResponseDTO.setTimestamp(new Date());
+            return new ResponseEntity<>(baseResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

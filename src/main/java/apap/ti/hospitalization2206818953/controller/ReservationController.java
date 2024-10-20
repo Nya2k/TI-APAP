@@ -1,6 +1,7 @@
 package apap.ti.hospitalization2206818953.controller;
 
 import java.text.DecimalFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +20,6 @@ import apap.ti.hospitalization2206818953.dto.request.AddPatientRequestDTO;
 import apap.ti.hospitalization2206818953.dto.request.AddReservationRequestDTO;
 import apap.ti.hospitalization2206818953.model.Nurse;
 import apap.ti.hospitalization2206818953.model.Patient;
-import apap.ti.hospitalization2206818953.model.Reservation;
 import apap.ti.hospitalization2206818953.model.Room;
 import apap.ti.hospitalization2206818953.service.NurseService;
 import apap.ti.hospitalization2206818953.service.PatientService;
@@ -76,8 +76,8 @@ public class ReservationController {
     @GetMapping("/reservations/create")
     public String createReservationForm(@RequestParam(value = "exist", required = false) boolean exist,
                                         @RequestParam(value = "nik", required = false) String nik, 
-                                        @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-                                        @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+                                        @RequestParam(value = "dateIn", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateIn,
+                                        @RequestParam(value = "dateOut", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOut,
                                         @RequestParam(value = "nurseId", required = false) UUID nurseId,
                                         Model model) {
         if (exist) {
@@ -85,11 +85,11 @@ public class ReservationController {
             List<Nurse> nurseList = nurseService.getAllNurses();
             model.addAttribute("reservationDTO", reservationDTO);
             model.addAttribute("nurseList", nurseList);
-            if (startDate != null && endDate != null && !startDate.after(endDate)) {
-                List<Room> availableRooms = roomService.getAvailableRooms(startDate, endDate);
+            if (dateIn != null && dateOut != null && !dateIn.after(dateOut)) {
+                List<Room> availableRooms = roomService.getAvailableRooms(dateIn, dateOut);
                 model.addAttribute("roomList", availableRooms);
-                reservationDTO.setStartDate(startDate);
-                reservationDTO.setEndDate(endDate);
+                reservationDTO.setDateIn(dateIn);
+                reservationDTO.setDateOut(dateOut);
                 reservationDTO.setNurseId(nurseId);
             }
             return "form-create-reservation";
@@ -104,12 +104,12 @@ public class ReservationController {
     @PostMapping("/reservations/create")
     public String postCreateReservationForm(@RequestParam(value = "exist", required = false) boolean exist,
                                             @RequestParam(value = "nik", required = false) String nik,
-                                            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-                                            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+                                            @RequestParam(value = "dateIn", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateIn,
+                                            @RequestParam(value = "dateOut", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOut,
                                             @ModelAttribute("patientDTO") AddPatientRequestDTO patientDTO,
                                             @ModelAttribute("reservationRequest") AddReservationRequestDTO reservationDTO, Model model) {
-        if (startDate != null && endDate != null && !startDate.after(endDate)) {
-            List<Room> roomList = roomService.getAvailableRooms(startDate, endDate);
+        if (dateIn != null && dateOut != null && !dateIn.after(dateOut)) {
+            List<Room> roomList = roomService.getAvailableRooms(dateIn, dateOut);
             model.addAttribute("roomList", roomList);
         }
         if (nik != null) {
@@ -122,15 +122,16 @@ public class ReservationController {
                 return "patient-not-found";
             }
         } else if (reservationDTO != null) {
-            var reservation = new Reservation();
-            reservation.setDateIn(reservationDTO.getStartDate());
-            reservation.setDateOut(reservationDTO.getEndDate());
-            reservation.setPatient(patientService.getPatientById(reservationDTO.getPatientId()));
-            reservation.setAssignedNurse(nurseService.getNurseById(reservationDTO.getNurseId()));
-            reservation.setRoom(roomService.getRoomById(reservationDTO.getRoomId()));
-            reservation.setCreatedAt(new Date());
-            reservation.setUpdatedAt(new Date());
-            reservationService.addReservation(reservation);
+            // var reservation = new Reservation();
+            // reservation.setId(generateReservationId(reservationDTO.getDateIn(), reservationDTO.getDateOut(), patientDTO.getNIK()));
+            // reservation.setDateIn(reservationDTO.getDateIn());
+            // reservation.setDateOut(reservationDTO.getDateOut());
+            // reservation.setPatient(patientService.getPatientById(reservationDTO.getPatientId()));
+            // reservation.setAssignedNurse(nurseService.getNurseById(reservationDTO.getNurseId()));
+            // reservation.setRoom(roomService.getRoomById(reservationDTO.getRoomId()));
+            // reservation.setCreatedAt(new Date());
+            // reservation.setUpdatedAt(new Date());
+            // reservationService.addReservation(reservation);
 
             model.addAttribute("message", "Reservation created successfully");
             return "response";
@@ -148,6 +149,29 @@ public class ReservationController {
         }
     }
 
+    private String generateReservationId(Date dateIn, Date dateOut, String nik) {
+        long differenceInMillis = dateOut.getTime() - dateIn.getTime();
+        long differenceInDays = differenceInMillis / (1000 * 60 * 60 * 24);
+        
+        // 2 digit selisih
+        String daysDiff = String.format("%02d", differenceInDays % 100);
+        
+        // hari buat reservasi
+        Calendar calendar = Calendar.getInstance();
+        String[] daysOfWeek = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+        String reservationDay = daysOfWeek[calendar.get(Calendar.DAY_OF_WEEK) - 1];
+        
+        // 4 huruf terakhir NIK pasien
+        String nikLastFour = nik.length() >= 4 ? nik.substring(nik.length() - 4) : String.format("%04d", 0);
+        
+        // jumlah reservasi
+        int reservationCount = reservationService.countReservations();
+        
+        String reservationId = String.format("RES%s%s%s%s", daysDiff, reservationDay, nikLastFour, String.format("%04d", reservationCount + 1));
+        
+        return reservationId;
+    }
+
     @PostMapping("/reservations/{id}/delete")
     public String deleteReservation(@PathVariable("id") String id, Model model) {
         try {
@@ -160,4 +184,22 @@ public class ReservationController {
             return "response";
         }
     }
+
+    @GetMapping("/reservations/chart")
+    public String showReservationChart(Model model) {
+        String period = "monthly";
+        int year = 2024;
+        
+        try {
+            List<Integer> stats = reservationService.getReservationStatsFromRest(period, year);
+            model.addAttribute("stats", stats);
+            model.addAttribute("period", period);
+            model.addAttribute("year", year);
+            return "reservation-chart";
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
+            return "response";
+        }
+    }
+
 }

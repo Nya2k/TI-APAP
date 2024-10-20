@@ -12,4 +12,7 @@ import apap.ti.hospitalization2206818953.model.Patient;
 public interface PatientDb extends JpaRepository<Patient, UUID> {
     @Query("SELECT p FROM Patient p WHERE p.NIK = :nik")
     Patient findByNIK(String nik);
+
+    @Query("SELECT COUNT(n) FROM Nurse n WHERE n.isDeleted = false")
+    int countByIsDeletedFalse();
 }
