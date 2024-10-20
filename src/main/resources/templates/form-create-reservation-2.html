@@ -5,59 +5,47 @@
     <meta charset="UTF-8">
     <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
     <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-    <title>Tambah Fasilitas</title>
+    <title>Add Facilities</title>
 </head>
 
 <body>
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
     <div class="container">
         <div class="text-center my-4">
-            <h2>Add Facilities (Opsional)</h2>
+            <h2>Add Facilities (Optional)</h2>
         </div>
         <div class="row justify-content-center">
             <div class="card" style="width: 60rem;">
                 <div class="card-body">
-                    <form th:action="@{/reservation/create}" th:object="${reservation}" method="POST">
+                    <form th:action="@{/reservations/save}" th:object="${reservation}" method="POST">
+                        <input type="hidden" th:field="*{id}" />
                         <div class="row my-3">
                             <label for="roomName" class="col-sm-2 fw-bold col-form-label">Room</label>
                             <p class="col-sm-1 fw-bold col-form-label" style="width: 2%">:</p>
                             <div class="col-sm-9">
-                                <input class="form-control" type="text" id="roomName" th:field="*{reservation.room.name}" />
+                                <input class="form-control" type="text" id="roomName" th:value="${reservation.room.name}" readonly="readonly" />
                             </div>
                         </div>
 
                         <div class="form-group my-3">
                             <div class="col-sm-10 d-flex justify-content-between">
                                 <h5>Facilities</h5>
-                                <button class="btn btn-primary" type="button" id="addRowButton">Tambah Row</button>
                             </div>
                         </div>
 
-                        <div class="form-group column my-3"></div>
+                        <div class="form-group column my-3">
                             <label for="facility" class="col-sm-2 fw-bold col-form-label">Facilities</label>
-                            <table class="table">
-                                <th class="d-flex justify-content-end">
-                                    <button class="btn btn-primary" type="submit" name="addRow">Tambah Row</button>
-                                </th>
-                                <tr th:each="facility, iterationStatus : *{listFacilities}">
-                                    <td>
-                                        <select th:field="*{listFacilities[__${iterStat.index}__].id}" class="form-control">
-                                            <option th:each="facility : ${availableFacilities}" 
-                                                th:value="${facility.id}"
-                                                th:text="${facility.name} + ' (+Rp ' + ${facility.fee} + ')'"></option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <button th:value="${iterationStatus.index}" class="btn btn-danger"
-                                            type="submit" name="deleteRow">Hapus</button>
-                                    </td>
-                                </tr>
-                            </table>
+                            <div class="col-sm-10">
+                                <div th:each="facility : ${availableFacilities}" class="form-check">
+                                    <input class="form-check-input" type="checkbox" th:value="${facility.id}" name="facilityIds" th:id="${'facility-' + facility.id}">
+                                    <label class="form-check-label" th:for="${'facility-' + facility.id}" th:text="${facility.name + ' (+Rp ' + facility.fee + ')'}"></label>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="text-center m-3">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <a class="btn btn-primary" href="#" th:href="@{/proyek/create}">Previous</a>
+                            <a class="btn btn-secondary" href="#" th:href="@{/reservations/create}">Previous</a>
                         </div>
                     </form>
                 </div>

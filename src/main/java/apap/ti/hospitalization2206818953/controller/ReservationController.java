@@ -1,6 +1,7 @@
 package apap.ti.hospitalization2206818953.controller;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import apap.ti.hospitalization2206818953.dto.request.AddPatientRequestDTO;
 import apap.ti.hospitalization2206818953.dto.request.AddReservationRequestDTO;
+import apap.ti.hospitalization2206818953.model.Facility;
 import apap.ti.hospitalization2206818953.model.Nurse;
 import apap.ti.hospitalization2206818953.model.Patient;
 import apap.ti.hospitalization2206818953.model.Reservation;
 import apap.ti.hospitalization2206818953.model.Room;
+import apap.ti.hospitalization2206818953.service.FacilityService;
 import apap.ti.hospitalization2206818953.service.NurseService;
 import apap.ti.hospitalization2206818953.service.PatientService;
 import apap.ti.hospitalization2206818953.service.ReservationService;
@@ -40,6 +43,9 @@ public class ReservationController {
 
     @Autowired
     private ReservationService reservationService;
+
+    @Autowired
+    private FacilityService facilityService;
 
     @GetMapping("/reservations")
     public String listRestReservations(Model model) {
@@ -122,6 +128,9 @@ public class ReservationController {
             reservation.setCreatedAt(new Date());
             reservation.setUpdatedAt(new Date());
             reservationService.addReservation(reservation);
+
+            List<Facility> availableFacilities = facilityService.getAllFacilities();
+            model.addAttribute("availableFacilities", availableFacilities);
             model.addAttribute("reservation", reservation);
             return "form-create-reservation-2";
         } else if (nik != null) {
@@ -148,24 +157,44 @@ public class ReservationController {
             List<Nurse> nurseList = nurseService.getAllNurses();
             model.addAttribute("reservationDTO", reservationDTO2);
             model.addAttribute("nurseList", nurseList);
-            model.addAttribute("nik", patientDTO.getNIK());
-            reservationDTO2.setPatientNIK(nik);
+            reservationDTO2.setPatientNIK(patientDTO.getNIK());
             return "form-create-reservation";
         }
     }
 
-    @PostMapping("/reservations/create/done")
-    public String postCreateReservationDone(@ModelAttribute("reservation") Reservation reservation,
-                                            @RequestParam List<String> facilities, // Assuming facilities are sent as a list
-                                            Model model) {
-        for (String facility : facilities) {
-
+    @PostMapping("/reservations/save")
+    public String addFacilities(@ModelAttribute Reservation reservation,
+                                @RequestParam("facilityIds") List<UUID> facilityIds,
+                                Model model) {
+        Reservation existingReservation = reservationService.getReservationById(reservation.getId());
+        
+        if (existingReservation == null) {
+            model.addAttribute("message", "Reservation not found!");
+            return "error";
         }
-        
-        
-        // reservationService.addReservation(reservation);
-        
-        model.addAttribute("message", "Berhasil menyimpan reservasi");
+
+        List<Facility> selectedFacilities = new ArrayList<>();
+        double additionalFee = 0.0;
+
+        for (UUID facilityId : facilityIds) {
+            Facility facility = facilityService.getFacilityById(facilityId);
+            if (facility != null) {
+                selectedFacilities.add(facility);
+                additionalFee += facility.getFee();
+            }
+        }
+
+        if (existingReservation.getListFacility() == null) {
+            existingReservation.setListFacility(new ArrayList<>());
+        }
+        existingReservation.getListFacility().addAll(selectedFacilities);
+
+        double currentFee = existingReservation.getTotalFee();
+        existingReservation.setTotalFee(currentFee + additionalFee);
+
+        reservationService.updateReservation(existingReservation);
+
+        model.addAttribute("message", "Reservasi berhasil disimpan");
         return "response";
     }
 
