@@ -20,16 +20,20 @@
                     <div class="header-bar mb-4">
                         <h3 class="d-inline">Reservation <span th:text="${reservation.id}"></span> Detail</h3>
                         <div class="float-right action-buttons">
-                            <!-- sementara -->
-                            <a href="/" class="btn btn-primary">Update Room</a>
-                            <a href="/" class="btn btn-primary">Update Facility</a>
+                            <a th:if="${#dates.format(new java.util.Date(), 'yyyy-MM-dd') < #dates.format(reservation.dateIn, 'yyyy-MM-dd')}"
+                                th:href="@{/reservations/{reservationId}/update-room(reservationId=${reservation.id})}"
+                                class="btn btn-primary">Update Room</a>
+                        
+                            <a th:if="${#dates.format(new java.util.Date(), 'yyyy-MM-dd') < #dates.format(reservation.dateOut, 'yyyy-MM-dd')}"
+                                th:href="@{/reservations/{reservationId}/update-facilities(reservationId=${reservation.id})}"
+                                class="btn btn-primary">Update Facility</a>
+                        
                             <form th:action="@{/reservations/{id}/delete(id=${reservation.id})}" method="post" style="display:inline;">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
                         </div>
                     </div>
 
-                    <!-- Reservation details -->
                     <div class="row mb-3">
                         <div class="col-sm-6">
                             <div class="row mb-3">
