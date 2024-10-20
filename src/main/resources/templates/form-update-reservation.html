@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Update Reservation</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <div class="container">
+        <div class="text-center my-4">
+            <h2 th:text="'Update Room for ' + ${reservationId}">Update Reservation</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="card" style="width: 60rem;">
+                <div class="card-body">
+                    <form th:action="@{/reservations/{reservationId}/update-room(reservationId=${reservationId})}" th:object="${reservationDTO}" method="POST">
+                        <div class="row my-3">
+                            <div class="col-sm-6 flex flex-col">
+                                <label for="nurseId" class="fw-bold col-form-label">Assigned Nurse</label>
+                                <select class="form-select" id="nurseId" th:field="*{nurseId}" required onchange="checkInputs()">
+                                    <option th:each="nurse : ${nurseList}"
+                                            th:value="${nurse.id}"
+                                            th:text="${nurse.name}"
+                                            th:selected="${nurse.id == reservationDTO.nurseId}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row my-3">
+                            <div class="col-sm-4">
+                                <label for="dateIn" class="fw-bold col-form-label">Reservation Date In</label>
+                                <input class="form-control" type="date" id="dateIn" th:field="*{dateIn}" 
+                                th:value="${#dates.format(reservationDTO.dateIn, 'yyyy-MM-dd')}" required 
+                                    onchange="checkInputs()"/>
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="dateOut" class="fw-bold col-form-label">Reservation Date Out</label>
+                                <input class="form-control" type="date" id="dateOut" th:field="*{dateOut}" 
+                                th:value="${#dates.format(reservationDTO.dateOut, 'yyyy-MM-dd')}" required 
+                                onchange="checkInputs()"/>
+                            </div>
+                            <div class="col-sm-4 d-flex align-items-end">
+                                <a class="btn btn-secondary ml-2"
+                                th:href="@{/reservations/{reservationId}/update-room(reservationId=${reservationId}, dateIn=${#dates.format(dateIn, 'yyyy-MM-dd')}, dateOut=${#dates.format(dateOut, 'yyyy-MM-dd')}, nurseId=${reservationDTO.nurseId})}" 
+                                onclick="this.href=this.href
+                                        .replace(/dateIn=[^&]*/, 'dateIn=' + encodeURIComponent(document.getElementById('dateIn').value))
+                                        .replace(/dateOut=[^&]*/, 'dateOut=' + encodeURIComponent(document.getElementById('dateOut').value))
+                                        .replace(/nurseId=[^&]*/, 'nurseId=' + encodeURIComponent(document.getElementById('nurseId').value));">
+                                    Search Available Rooms
+                                </a>
+                            </div>
+                        </div>
+
+                        <div id="availableRooms" class="row my-3 flex flex-col">
+                            <div class="col-sm-6">
+                                <label for="room" class="fw-bold col-form-label">Room</label>
+                                <select class="form-select" id="room" th:field="*{roomId}" required onchange="checkInputs()">
+                                    <option th:each="room : ${roomList}" 
+                                            th:value="${room.id}" 
+                                            th:text="${room.name}"
+                                            th:selected="${room.id == reservationDTO.roomId}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 my-4">
+                            <button type="submit" class="btn btn-primary" id="updateBtn">Update</button>
+                            <a class="btn btn-danger" th:href="@{/reservations/{reservationId}(reservationId=${reservationId})}">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkInputs() {
+            const nurseId = document.getElementById('nurseId').value;
+            const dateIn = document.getElementById('dateIn').value;
+            const dateOut = document.getElementById('dateOut').value;
+            const roomId = document.getElementById('room').value;
+
+            const updateBtn = document.getElementById('updateBtn');
+            updateBtn.disabled = !(nurseId && dateIn && dateOut && roomId);
+        }
+    </script>
+</body>
+</html>

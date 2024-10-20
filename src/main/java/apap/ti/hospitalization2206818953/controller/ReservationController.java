@@ -1,6 +1,7 @@
 package apap.ti.hospitalization2206818953.controller;
 
 import java.text.DecimalFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import apap.ti.hospitalization2206818953.dto.request.AddPatientRequestDTO;
 import apap.ti.hospitalization2206818953.dto.request.AddReservationRequestDTO;
+import apap.ti.hospitalization2206818953.dto.request.UpdateReservationRequestDTO;
 import apap.ti.hospitalization2206818953.model.Facility;
 import apap.ti.hospitalization2206818953.model.Nurse;
 import apap.ti.hospitalization2206818953.model.Patient;
@@ -188,12 +190,9 @@ public class ReservationController {
             existingReservation.setListFacility(new ArrayList<>());
         }
         existingReservation.getListFacility().addAll(selectedFacilities);
-
         double currentFee = existingReservation.getTotalFee();
         existingReservation.setTotalFee(currentFee + additionalFee);
-
         reservationService.updateReservation(existingReservation);
-
         model.addAttribute("message", "Reservasi berhasil disimpan");
         return "response";
     }
@@ -252,4 +251,92 @@ public class ReservationController {
         }
     }
 
+    @GetMapping("/reservations/{reservationId}/update-room")
+    public String updateReservationForm(@PathVariable String reservationId, Model model) {
+        Reservation reservation = reservationService.getReservationById(reservationId);
+
+        UpdateReservationRequestDTO reservationDTO = new UpdateReservationRequestDTO();
+        reservationDTO.setNurseId(reservation.getAssignedNurse().getId());
+        reservationDTO.setDateIn(reservation.getDateIn());
+        reservationDTO.setDateOut(reservation.getDateOut());
+        reservationDTO.setRoomId(reservation.getRoom().getId());
+
+        model.addAttribute("reservationDTO", reservationDTO);
+        model.addAttribute("nurseList", nurseService.getAllNurses());
+        model.addAttribute("roomList", roomService.getAvailableRooms(reservation.getDateIn(), reservation.getDateOut()));
+        model.addAttribute("reservationId", reservationId);
+
+        return "form-update-reservation";
+    }
+
+    @PostMapping("/reservations/{reservationId}/update-room")
+    public String updateReservation(@PathVariable String reservationId,
+                                    @ModelAttribute UpdateReservationRequestDTO reservationDTO,
+                                    Model model) {
+        Reservation existingReservation = reservationService.getReservationById(reservationId);
+
+        existingReservation.setAssignedNurse(nurseService.getNurseById(reservationDTO.getNurseId()));
+        existingReservation.setDateIn(reservationDTO.getDateIn());
+        existingReservation.setDateOut(reservationDTO.getDateOut());
+        Room newRoom = roomService.getRoomById(reservationDTO.getRoomId());
+        existingReservation.setRoom(newRoom);
+
+        long daysBetween = ChronoUnit.DAYS.between(
+            reservationDTO.getDateIn().toInstant(),
+            reservationDTO.getDateOut().toInstant()
+        );
+        double roomFee = newRoom.getPricePerDay() * daysBetween;
+        double facilityFee = existingReservation.getListFacility().stream()
+                                .mapToDouble(Facility::getFee)
+                                .sum();
+        existingReservation.setTotalFee(roomFee + facilityFee);
+
+        existingReservation.setUpdatedAt(new Date());
+        reservationService.updateReservation(existingReservation);
+
+        model.addAttribute("message", "Reservasi berhasil di-update");
+        return "response";
+    }
+
+    @GetMapping("/reservations/{reservationId}/update-facilities")
+    public String updateFacilitiesForm(@PathVariable String reservationId, Model model) {
+        Reservation reservation = reservationService.getReservationById(reservationId);
+
+        List<Facility> availableFacilities = facilityService.getAllFacilities();
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("availableFacilities", availableFacilities);
+        model.addAttribute("selectedFacilities", reservation.getListFacility());
+
+        return "form-update-facility";
+    }
+
+    @PostMapping("/reservations/{reservationId}/update-facilities")
+    public String updateFacilities(@PathVariable String reservationId,
+                                    @RequestParam("facilityIds") List<UUID> facilityIds,
+                                    Model model) {
+        Reservation existingReservation = reservationService.getReservationById(reservationId);
+
+        List<Facility> selectedFacilities = new ArrayList<>();
+        double additionalFee = 0.0;
+
+        for (UUID facilityId : facilityIds) {
+            Facility facility = facilityService.getFacilityById(facilityId);
+            if (facility != null) {
+                selectedFacilities.add(facility);
+                additionalFee += facility.getFee();
+            }
+        }
+
+        if (existingReservation.getListFacility() == null) {
+            existingReservation.setListFacility(new ArrayList<>());
+        }
+        existingReservation.getListFacility().addAll(selectedFacilities);
+        double currentFee = existingReservation.getTotalFee();
+        existingReservation.setTotalFee(currentFee + additionalFee);
+        existingReservation.setUpdatedAt(new Date());
+        reservationService.updateReservation(existingReservation);
+
+        model.addAttribute("message", "Fasilitas berhasil di-update");
+        return "response";
+    }
 }
