@@ -1,10 +1,9 @@
 package apap.ti.hospitalization2206818953;
 
-import java.util.Locale;
-
-import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.CommandLineRunner;
@@ -20,11 +19,11 @@ import apap.ti.hospitalization2206818953.model.Nurse;
 import apap.ti.hospitalization2206818953.model.Patient;
 import apap.ti.hospitalization2206818953.model.Reservation;
 import apap.ti.hospitalization2206818953.model.Room;
-import apap.ti.hospitalization2206818953.service.RoomService;
-import apap.ti.hospitalization2206818953.service.PatientService;
-import apap.ti.hospitalization2206818953.service.NurseService;
 import apap.ti.hospitalization2206818953.service.FacilityService;
+import apap.ti.hospitalization2206818953.service.NurseService;
+import apap.ti.hospitalization2206818953.service.PatientService;
 import apap.ti.hospitalization2206818953.service.ReservationService;
+import apap.ti.hospitalization2206818953.service.RoomService;
 
 @SpringBootApplication
 public class Hospitalization2206818953Application {

@@ -78,6 +78,7 @@ public class RoomController {
     @GetMapping("/rooms/create")
     public String formAddRoom(Model model) {
         var roomDTO = new AddRoomRequestDTO();
+        
         model.addAttribute("roomDTO", roomDTO);
 
         return "form-add-room";

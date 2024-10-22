@@ -93,7 +93,6 @@ public class ReservationRestServiceImpl implements ReservationRestService {
     }
 
 
-
     @Override
     public List<Integer> getReservationStats(String period, int year) throws Exception {
         List<Reservation> reservations = reservationDb.findByYear(year);
