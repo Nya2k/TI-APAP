@@ -1,8 +1,8 @@
 package apap.ti.hospitalization2206818953.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor

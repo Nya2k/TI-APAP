@@ -34,7 +34,7 @@ public class RoomController {
     }
 
     @GetMapping("/rooms/{roomId}")
-    public String getRoomDetails(@PathVariable String roomId, 
+    public String getRoomDetails(@PathVariable String roomId,
                                 @RequestParam(required = false) String dateIn,
                                 @RequestParam(required = false) String dateOut,
                                 Model model) throws ParseException {
